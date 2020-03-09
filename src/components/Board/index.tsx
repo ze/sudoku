@@ -1,15 +1,15 @@
 import React from "react";
 import { BoardContext } from "../BoardContext";
 import Cell from "../Cell";
-import boardData from "./BoardData";
+import boardData, { MarkInvoke } from "./BoardData";
 import "./index.scss";
-
 
 export default class Board extends React.Component {
   static contextType = BoardContext;
   context!: React.ContextType<typeof BoardContext>;
 
-  boardDataSetter = (value?: number) => ((row: number, column: number) => boardData.set(row, column, value));
+  valueSetter = (digit?: number) => ((row: number, column: number) => boardData.setValue(row, column, digit));
+  markSetter = (value: MarkInvoke) => ((row: number, column: number) => boardData.setMark(row, column, value));
 
   handleKeyDown = (event: KeyboardEvent) => {
     if (this.context === null) return;
@@ -18,6 +18,7 @@ export default class Board extends React.Component {
     if (selectedBoxes === undefined) return;
 
     const code = event.code;
+    const shift = event.shiftKey;
     switch (code) {
       case "Digit1":
       case "Digit2":
@@ -28,13 +29,24 @@ export default class Board extends React.Component {
       case "Digit7":
       case "Digit8":
       case "Digit9": {
-        const digit = code.charAt(code.length - 1);
-        const value = Number.parseInt(digit);
-        selectedBoxes.forEach(this.boardDataSetter(value));
+        const str = code.charAt(code.length - 1);
+        const digit = Number.parseInt(str);
+
+        const setter = shift ? this.markSetter((marked) => {
+          if (marked.has(digit)) {
+            marked.delete(digit);
+          } else {
+            marked.add(digit);
+          }
+        }) : this.valueSetter(digit);
+
+        selectedBoxes.forEach(setter);
         break;
       }
+      case "Delete":
       case "Backspace": {
-        selectedBoxes.forEach(this.boardDataSetter(undefined));
+        const setter = shift ? this.markSetter((marked) => marked.clear()) : this.valueSetter(undefined);
+        selectedBoxes.forEach(setter);
         break;
       }
       case "Escape": {
@@ -52,16 +64,15 @@ export default class Board extends React.Component {
   }
 
   render() {
+    const cells = [];
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        cells.push(<Cell key={i * 3 + j} originRow={i * 3} originColumn={j * 3} />);
+      }
+    }
+
     return (<div id="board">
-      <Cell originRow={0} originColumn={0} />
-      <Cell originRow={0} originColumn={3} />
-      <Cell originRow={0} originColumn={6} />
-      <Cell originRow={3} originColumn={0} />
-      <Cell originRow={3} originColumn={3} />
-      <Cell originRow={3} originColumn={6} />
-      <Cell originRow={6} originColumn={0} />
-      <Cell originRow={6} originColumn={3} />
-      <Cell originRow={6} originColumn={6} />
+      {cells}
     </div>);
   }
 }

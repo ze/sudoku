@@ -1,8 +1,7 @@
 import React from "react";
-import boardData, { BoxUpdater } from "../Board/BoardData";
+import boardData, { MarkUpdater, ValueUpdater } from "../Board/BoardData";
 import { BoardContext } from "../BoardContext";
 import PencilMarks from "../PencilMarks";
-import { MarkSetter } from "../PencilMarks/Marking";
 import { BoxIndex } from "./BoxSet";
 import "./index.scss";
 
@@ -13,7 +12,7 @@ interface BoxProps {
 
 interface BoxState {
   value?: number;
-  marked: Map<number, boolean>;
+  marked: Set<number>;
 }
 
 export default class Box extends React.Component<BoxProps, BoxState> {
@@ -22,26 +21,24 @@ export default class Box extends React.Component<BoxProps, BoxState> {
 
   state: BoxState = {
     value: undefined,
-    marked: new Map()
+    marked: new Set()
   };
 
-  setValue: BoxUpdater = (value) => {
+  setValue: ValueUpdater = (value) => {
     this.setState({ value });
   };
 
-  setMarked: MarkSetter = (digit, value) => {
-    const marked = new Map(this.state.marked);
-    marked.set(digit, value);
+  setMarked: MarkUpdater = (invoke) => {
+    const marked = new Set(this.state.marked);
+    invoke(marked);
     this.setState({ marked });
   };
-
-  anyMarked = () => this.state.marked.size !== 0;
 
   constructor(props: Readonly<BoxProps>) {
     super(props);
     const { row, column } = this.props;
 
-    boardData.bind(row, column, this.setValue);
+    boardData.bind(row, column, this.setValue, this.setMarked);
   }
 
   onDivClick = (event: MouseEvent) => {
@@ -68,20 +65,16 @@ export default class Box extends React.Component<BoxProps, BoxState> {
     this.divRef?.current?.removeEventListener("click", this.onDivClick);
   }
 
-  renderValue = () => {
-    return <p className="box-value">{this.state.value}</p>;
-  };
+  renderValue = () => (<p className="box-value">{this.state.value}</p>);
 
-  renderPencilMarks = () => {
-    return <PencilMarks marked={this.state.marked} setMarked={this.setMarked} />;
-  };
+  renderPencilMarks = () => (<PencilMarks marked={this.state.marked} />);
 
   render() {
     if (this.context === null) return null;
     const { selectedBoxes } = this.context;
 
     const { row, column } = this.props;
-    const { value } = this.state;
+    const { value, marked } = this.state;
 
     const boxIndex: BoxIndex = [row, column];
 
@@ -89,8 +82,15 @@ export default class Box extends React.Component<BoxProps, BoxState> {
     const isSelected = selectedBoxes?.has(boxIndex) || false;
     isSelected && classNames.push("selected");
 
-    const boxRender = !value && (isSelected || this.anyMarked()) ? this.renderPencilMarks : this.renderValue;
+    let boxRender;
+    if (value) {
+      boxRender = this.renderValue();
+    } else if (marked.size !== 0) {
+      boxRender = this.renderPencilMarks();
+    } else {
+      boxRender = (<></>);
+    }
 
-    return (<div ref={this.divRef} className={classNames.join(" ")}>{boxRender()}</div>);
+    return (<div ref={this.divRef} className={classNames.join(" ")}>{boxRender}</div>);
   }
 }

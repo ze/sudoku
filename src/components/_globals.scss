@@ -10,3 +10,10 @@ $board-outline: $box-length / 10;
 
 $board-background-color: #676767;
 $board-outline-color: #222222;
+
+@mixin user-select($select) {
+  -webkit-user-select: $select;
+  -moz-user-select: $select;
+  -ms-user-select: $select;
+  user-select: $select;
+}

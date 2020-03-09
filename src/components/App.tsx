@@ -1,9 +1,10 @@
 import React from "react";
 import Board from "./Board";
-import { BoardContext, BoardContextInterface } from "./BoardContext";
+import { BoardContext } from "./BoardContext";
 import BoxSet, { BoxIndex } from "./Box/BoxSet";
+import Keyboard from "./Keyboard";
 
-export default class App extends React.Component<{}, BoardContextInterface> {
+export default class App extends React.Component<{}, BoardContext> {
   setSelected = (box: BoxIndex) => {
     this.setState({ selectedBoxes: new BoxSet(box) });
   };
@@ -16,7 +17,7 @@ export default class App extends React.Component<{}, BoardContextInterface> {
     this.setState({ selectedBoxes: undefined });
   };
 
-  state: BoardContextInterface = {
+  state: BoardContext = {
     selectedBoxes: undefined,
     setSelected: this.setSelected,
     addSelected: this.addSelected,
@@ -26,6 +27,7 @@ export default class App extends React.Component<{}, BoardContextInterface> {
   render() {
     return (<BoardContext.Provider value={this.state}>
       <Board />
+      <Keyboard />
     </BoardContext.Provider>);
   }
 }

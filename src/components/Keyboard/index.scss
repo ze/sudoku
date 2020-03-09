@@ -1,0 +1,136 @@
+@import "../globals";
+
+$kb-width: 240px;
+$kb-np-container-length: $kb-width * 0.3;
+
+$kb-np-margin-top: 10px;
+$kb-np-spacing: 4px;
+
+$kb-np-number-length: $kb-np-container-length - 2 * $kb-np-spacing;
+
+$button-height: 40px;
+$button-border-radius: 2px;
+
+$kb-np-color: #ffffff;
+$kb-np-active-color: darken($kb-np-color, 5%);
+
+$button-font-color: #000000;
+$button-selected-font-color: #eeeeee;
+
+$button-background-color: #ffffff;
+$button-selected-background-color: #000000;
+$button-border-color: #222222;
+
+.kb {
+  $kb-height: $board-length + 2 * $board-outline;
+
+  width: 100%;
+  max-width: $kb-width;
+  height: $kb-height;
+}
+
+button {
+  height: $button-height;
+  width: 50%;
+
+  text-align: center;
+  cursor: pointer;
+
+  background-color: $button-background-color;
+  color: $button-font-color;
+
+  border: 1px solid $button-border-color;
+
+  &:focus {
+    outline: none;
+  }
+
+  &.kb-sw-regular {
+    border-top-left-radius: $button-border-radius;
+    border-bottom-left-radius: $button-border-radius;
+  }
+
+  &.kb-sw-candidate {
+    border-top-right-radius: $button-border-radius;
+    border-bottom-right-radius: $button-border-radius;
+  }
+}
+
+.kb-sw-selected {
+  border: none;
+
+  background-color: $button-selected-background-color;
+  color: $button-selected-font-color;
+}
+
+.kb-np {
+  display: flex;
+  justify-content: space-between;
+  flex-flow: row wrap;
+
+  @include user-select(none);
+}
+
+.kb-np-container {
+  position: relative;
+
+  width: $kb-np-container-length;
+  height: $kb-np-container-length;
+
+  margin-top: $kb-np-margin-top;
+
+  background-color: $kb-np-color;
+  color: $button-font-color;
+
+  border: 1px solid $button-border-color;
+  border-radius: $button-border-radius;
+
+  cursor: pointer;
+
+  &:active {
+    background-color: $kb-np-active-color;
+  }
+}
+
+.kb-np-number {
+  position: absolute;
+  top: $kb-np-spacing;
+  right: $kb-np-spacing;
+  bottom: $kb-np-spacing;
+  left: $kb-np-spacing;
+
+  pointer-events: none;
+}
+
+.regular {
+  width: 100%;
+  height: 100%;
+  font-size: $kb-np-number-length / 2;
+  line-height: $kb-np-number-length;
+}
+
+.candidate {
+  $third: $kb-np-number-length / 3;
+
+  position: absolute;
+
+  width: $third;
+  height: $third;
+  line-height: $third;
+
+  &.row-1 {
+    top: $third;
+  }
+
+  &.row-2 {
+    top: 2 * $third;
+  }
+
+  &.col-1 {
+    left: $third;
+  }
+
+  &.col-2 {
+    left: 2 * $third;
+  }
+}

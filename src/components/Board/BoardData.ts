@@ -1,4 +1,7 @@
-export type BoxUpdater = (value?: number) => void;
+export type ValueUpdater = (value?: number) => void;
+
+export type MarkInvoke = (marked: Set<number>) => void;
+export type MarkUpdater = (invoke: MarkInvoke) => void;
 
 class BoardData {
   private data: BoxMetadata[][];
@@ -16,27 +19,43 @@ class BoardData {
     return metadata.value;
   }
 
-  bind(row: number, column: number, updateBox: BoxUpdater) {
-    this.data[row][column] = new BoxMetadata(updateBox);
+  bind(
+    row: number,
+    column: number,
+    updateBox: ValueUpdater,
+    updateMark: MarkUpdater
+  ) {
+    this.data[row][column] = new BoxMetadata(updateBox, updateMark);
   }
 
-  set(row: number, column: number, value?: number) {
+  setValue(row: number, column: number, digit?: number) {
     const metadata = this.data[row][column];
-    metadata.update(value);
+    metadata.updateBoxValue(digit);
+  }
+
+  setMark(row: number, column: number, value: MarkInvoke) {
+    const metadata = this.data[row][column];
+    metadata.updateBoxMark(value);
   }
 }
 
 class BoxMetadata {
-  private updateBox: BoxUpdater;
+  private updateValue: ValueUpdater;
+  private updateMark: MarkUpdater;
   value?: number = undefined;
 
-  constructor(updateBox: BoxUpdater) {
-    this.updateBox = updateBox;
+  constructor(updateValue: ValueUpdater, updateMark: MarkUpdater) {
+    this.updateValue = updateValue;
+    this.updateMark = updateMark;
   }
 
-  update(value?: number) {
+  updateBoxValue(value?: number) {
     this.value = value;
-    this.updateBox(value);
+    this.updateValue(value);
+  }
+
+  updateBoxMark(value: MarkInvoke) {
+    this.updateMark(value);
   }
 }
 

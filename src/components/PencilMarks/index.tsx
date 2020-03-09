@@ -1,17 +1,15 @@
 import React from "react";
 import "./index.scss";
-import Marking, { MarkSetter } from "./Marking";
+import Marking from "./Marking";
 
 interface PencilMarksProps {
-  marked: Map<number, boolean>;
-  setMarked: MarkSetter;
+  marked: Set<number>;
 }
 
-const PencilMarks: React.FC<PencilMarksProps> = ({ marked, setMarked }) => {
+const PencilMarks: React.FC<PencilMarksProps> = ({ marked }) => {
   const markings = [];
   for (let i = 1; i < 10; i++) {
-    const isMarked = marked.get(i) || false;
-    markings.push(<Marking key={i} digit={i} marked={isMarked} setMarked={setMarked} />);
+    markings.push(<Marking key={i} digit={i} marked={marked.has(i)} />);
   }
 
   return (<div className="pencil-marks">
@@ -19,4 +17,19 @@ const PencilMarks: React.FC<PencilMarksProps> = ({ marked, setMarked }) => {
   </div>);
 };
 
-export default PencilMarks;
+const areEqual = (prevProps: Readonly<PencilMarksProps>, nextProps: Readonly<PencilMarksProps>) => {
+  const prevMarked = prevProps.marked;
+  const nextMarked = nextProps.marked;
+
+  if (prevMarked.size !== nextMarked.size) return false;
+
+  for (const mark of prevMarked.values()) {
+    if (!nextMarked.has(mark)) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+export default React.memo(PencilMarks, areEqual);

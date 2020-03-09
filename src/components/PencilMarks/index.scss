@@ -6,38 +6,16 @@ $marking-length: $box-length / 3;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-evenly;
-}
 
-p {
-  margin: 0;
-  text-align: center;
-  line-height: $marking-length;
-}
+  & > p {
+    width: $marking-length;
+    height: $marking-length;
 
-@mixin markable($opacity) {
-  width: $marking-length;
-  height: $marking-length;
-  opacity: $opacity;
-}
+    line-height: $marking-length;
+    opacity: 0;
 
-@mixin transition($args...) {
-  -webkit-transition: $args;
-  -moz-transition: $args;
-  -ms-transition: $args;
-  -o-transition: $args;
-  transition: $args;
-}
-
-.unmarked {
-  @include markable(0);
-
-  &:hover {
-    opacity: 0.5;
+    &.marked {
+      opacity: 1;
+    }
   }
-
-  @include transition(opacity 0.4s ease);
-}
-
-.marked {
-  @include markable(1);
 }
