@@ -1,0 +1,21 @@
+@import "../globals";
+
+@mixin user-select($select) {
+  -webkit-user-select: $select;
+  -moz-user-select: $select;
+  -ms-user-select: $select;
+  user-select: $select;
+}
+
+#board {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+
+  height: $board-length;
+  width: $board-length;
+  background: $board-background-color;
+  outline: $board-outline solid $board-outline-color;
+
+  @include user-select(none);
+}

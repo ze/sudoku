@@ -1,0 +1,43 @@
+@import "../globals";
+
+$marking-length: $box-length / 3;
+
+.pencil-marks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+p {
+  margin: 0;
+  text-align: center;
+  line-height: $marking-length;
+}
+
+@mixin markable($opacity) {
+  width: $marking-length;
+  height: $marking-length;
+  opacity: $opacity;
+}
+
+@mixin transition($args...) {
+  -webkit-transition: $args;
+  -moz-transition: $args;
+  -ms-transition: $args;
+  -o-transition: $args;
+  transition: $args;
+}
+
+.unmarked {
+  @include markable(0);
+
+  &:hover {
+    opacity: 0.5;
+  }
+
+  @include transition(opacity 0.4s ease);
+}
+
+.marked {
+  @include markable(1);
+}

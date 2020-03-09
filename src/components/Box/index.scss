@@ -1,0 +1,33 @@
+@import "../globals";
+
+$box-color: white;
+$box-selected-color: #8ec5f2;
+$box-hover-color: lighten($box-selected-color, 10%);
+$box-prefilled-color: darken($box-color, 10%);
+
+.box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: $box-length;
+  width: $box-length;
+  background-color: $box-color;
+  outline: $cell-outline-length solid $board-background-color;
+
+  &:hover {
+    background-color: $box-hover-color;
+  }
+
+  &.prefilled {
+    background-color: $box-prefilled-color;
+  }
+
+  &.selected {
+    background-color: $box-selected-color;
+  }
+}
+
+.box-value {
+  font-size: $box-length * 0.6;
+}

@@ -1,0 +1,12 @@
+$box-length: 70px;
+
+$cell-padding: $box-length / 20;
+
+$cell-length: $box-length * 3;
+$cell-outline-length: 1px;
+
+$board-length: $cell-length * 3 + $cell-padding * 2;
+$board-outline: $box-length / 10;
+
+$board-background-color: #676767;
+$board-outline-color: #222222;
