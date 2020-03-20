@@ -8,6 +8,8 @@ import "./index.scss";
 interface BoxProps {
   row: number,
   column: number;
+  hasRM: boolean;
+  hasBM: boolean;
 }
 
 interface BoxState {
@@ -73,14 +75,16 @@ export default class Box extends React.Component<BoxProps, BoxState> {
     if (this.context === null) return null;
     const { selectedBoxes } = this.context;
 
-    const { row, column } = this.props;
+    const { row, column, hasRM, hasBM } = this.props;
     const { value, marked } = this.state;
 
     const boxIndex: BoxIndex = [row, column];
 
     const classNames = ["box"];
-    const isSelected = selectedBoxes?.has(boxIndex) || false;
-    isSelected && classNames.push("selected");
+    selectedBoxes?.has(boxIndex) && classNames.push("selected");
+    hasRM && classNames.push("rm");
+    hasBM && classNames.push("bm");
+
 
     let boxRender;
     if (value) {

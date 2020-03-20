@@ -1,6 +1,6 @@
 import React from "react";
 import { BoardContext } from "../BoardContext";
-import Cell from "../Cell";
+import Box from "../Box";
 import boardData, { MarkInvoke } from "./BoardData";
 import "./index.scss";
 
@@ -64,15 +64,18 @@ export default class Board extends React.Component {
   }
 
   render() {
-    const cells = [];
-    for (let i = 0; i < 3; i++) {
-      for (let j = 0; j < 3; j++) {
-        cells.push(<Cell key={i * 3 + j} originRow={i * 3} originColumn={j * 3} />);
+    const boxes = [];
+    for (let i = 0; i < 9; i++) {
+      for (let j = 0; j < 9; j++) {
+        const hasBM = i === 2 || i === 5;
+        const hasRM = j === 2 || j === 5;
+
+        boxes.push(<Box key={i * 9 + j} row={i} column={j} hasRM={hasRM} hasBM={hasBM} />);
       }
     }
 
     return (<div id="board">
-      {cells}
+      {boxes}
     </div>);
   }
 }

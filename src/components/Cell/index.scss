@@ -1,9 +1,0 @@
-@import "../globals";
-
-.cell {
-  height: $cell-length;
-  width: $cell-length;
-  display: flex;
-  flex-wrap: wrap;
-  margin-bottom: $cell-padding;
-}

@@ -1,5 +1,7 @@
 @import "../globals";
 
+$box-outline-length: 1px;
+
 $box-color: white;
 $box-selected-color: #8ec5f2;
 $box-hover-color: lighten($box-selected-color, 10%);
@@ -13,7 +15,7 @@ $box-prefilled-color: darken($box-color, 10%);
   height: $box-length;
   width: $box-length;
   background-color: $box-color;
-  outline: $cell-outline-length solid $board-background-color;
+  outline: $box-outline-length solid $board-background-color;
 
   &:hover {
     background-color: $box-hover-color;
@@ -25,6 +27,14 @@ $box-prefilled-color: darken($box-color, 10%);
 
   &.selected {
     background-color: $box-selected-color;
+  }
+
+  &.rm {
+    margin-right: $box-margin;
+  }
+
+  &.bm {
+    margin-bottom: $box-margin;
   }
 }
 
