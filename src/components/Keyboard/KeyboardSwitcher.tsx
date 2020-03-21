@@ -1,10 +1,7 @@
 import React from "react";
+import { KeyboardProps } from ".";
 
-interface KeyboardSwitcherProps {
-  isRegular: boolean;
-}
-
-const KeyboardSwitcher: React.FC<KeyboardSwitcherProps> = ({ isRegular }) => {
+const KeyboardSwitcher: React.FC<KeyboardProps> = ({ isRegular }) => {
   let regularClassName = "kb-sw-regular" + (isRegular ? " kb-sw-selected" : "");
   let candidateClassName = "kb-sw-candidate" + (!isRegular ? " kb-sw-selected" : "");
 

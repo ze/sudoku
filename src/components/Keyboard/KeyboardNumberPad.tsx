@@ -1,10 +1,7 @@
 import React from "react";
+import { KeyboardProps } from ".";
 
-
-interface KeyboardNumberPadProps {
-  isRegular: boolean;
-}
-interface NumberContainerProps extends KeyboardNumberPadProps {
+interface NumberContainerProps extends KeyboardProps {
   digit: number;
 }
 
@@ -22,7 +19,7 @@ const NumberContainer: React.FC<NumberContainerProps> = ({ isRegular, digit }) =
   </div>);
 };
 
-const KeyboardNumberPad: React.FC<KeyboardNumberPadProps> = ({ isRegular }) => {
+const KeyboardNumberPad: React.FC<KeyboardProps> = ({ isRegular }) => {
 
   const numbers = [];
 

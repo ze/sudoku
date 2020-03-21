@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from "react";
-import isEqual from "react-fast-compare";
 import { BoxEvent } from "../App";
 import "./index.scss";
 import PencilMarks from "./PencilMarks";
@@ -52,12 +51,4 @@ const Box: React.FC<BoxProps> = ({ id, hasRM, hasBM, isSelected, setSelected, va
   return (<div ref={divRef} className={classNames.join(" ")}>{boxRender}</div>);
 };
 
-const areEqual = (prevProps: Readonly<BoxProps>, nextProps: Readonly<BoxProps>) => {
-  if (prevProps.id === 1) {
-    console.log(prevProps.marks, nextProps.marks, isEqual(prevProps, nextProps));
-  }
-
-  return isEqual(prevProps, nextProps);
-};
-
-export default React.memo(Box, areEqual);
+export default Box;
