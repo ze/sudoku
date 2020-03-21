@@ -1,33 +1,49 @@
 import React from "react";
 import Board from "./Board";
-import { BoardContext } from "./BoardContext";
-import BoxSet, { BoxIndex } from "./Box/BoxSet";
 import Keyboard from "./Keyboard";
 
-export default class App extends React.Component<{}, BoardContext> {
-  setSelected = (box: BoxIndex) => {
-    this.setState({ selectedBoxes: new BoxSet(box) });
+export interface AppState {
+  selected?: Set<number>;
+  setSelected: (event: BoxEvent) => void;
+}
+
+export type BoxEvent =
+  | { type: "add", box: number; }
+  | { type: "set", box: number; }
+  | { type: "clear"; };
+
+export default class App extends React.Component<{}, AppState> {
+  setSelected = (event: BoxEvent) => {
+    switch (event.type) {
+      case "add": {
+        const selected = new Set<number>(this.state.selected);
+        selected.add(event.box);
+        this.setState({ selected });
+        break;
+      }
+      case "set": {
+        const selected = new Set<number>().add(event.box);
+        this.setState({ selected });
+        break;
+      }
+      case "clear": {
+        this.setState({ selected: undefined });
+        break;
+      }
+    }
   };
 
-  addSelected = (box: BoxIndex) => {
-    this.setState(prevState => ({ selectedBoxes: new BoxSet(box, prevState.selectedBoxes) }));
-  };
-
-  clearSelected = () => {
-    this.setState({ selectedBoxes: undefined });
-  };
-
-  state: BoardContext = {
-    selectedBoxes: undefined,
+  state = {
+    selected: undefined,
     setSelected: this.setSelected,
-    addSelected: this.addSelected,
-    clearSelected: this.clearSelected
   };
 
   render() {
-    return (<BoardContext.Provider value={this.state}>
-      <Board />
-      <Keyboard />
-    </BoardContext.Provider>);
+    const { selected, setSelected } = this.state;
+
+    return (<>
+      <Board selected={selected} setSelected={setSelected} />
+      <Keyboard isRegular={true} />
+    </>);
   }
 }

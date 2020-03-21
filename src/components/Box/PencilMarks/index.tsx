@@ -17,19 +17,4 @@ const PencilMarks: React.FC<PencilMarksProps> = ({ marks }) => {
   </div>);
 };
 
-const areEqual = (prevProps: Readonly<PencilMarksProps>, nextProps: Readonly<PencilMarksProps>) => {
-  const prevMarks = prevProps.marks;
-  const nextMarks = nextProps.marks;
-
-  if (prevMarks.size !== nextMarks.size) return false;
-
-  for (const mark of prevMarks) {
-    if (!nextMarks.has(mark)) {
-      return false;
-    }
-  }
-
-  return true;
-};
-
-export default React.memo(PencilMarks, areEqual);
+export default PencilMarks;

@@ -1,24 +1,37 @@
 import React from "react";
-import { BoardContext } from "../BoardContext";
+import { AppState } from "../App";
 import Box from "../Box";
-import boardData, { MarkInvoke } from "./BoardData";
 import "./index.scss";
 
-export default class Board extends React.Component {
-  static contextType = BoardContext;
-  context!: React.ContextType<typeof BoardContext>;
+type BoardProps = AppState;
 
-  valueSetter = (digit?: number) => ((row: number, column: number) => boardData.setValue(row, column, digit));
-  markSetter = (value: MarkInvoke) => ((row: number, column: number) => boardData.setMark(row, column, value));
+type BoxData = {
+  marks: Set<number>;
+  value?: number;
+};
+
+interface BoardState {
+  data: Map<number, BoxData>;
+}
+
+export default class Board extends React.Component<BoardProps, BoardState> {
+  state: BoardState = {
+    data: new Map()
+  };
+
+  getOrDefault(data: Map<number, BoxData>, id: number): BoxData {
+    return data.get(id) || {
+      value: undefined,
+      marks: new Set()
+    };
+  }
 
   handleKeyDown = (event: KeyboardEvent) => {
-    if (this.context === null) return;
+    const { selected, setSelected } = this.props;
+    if (selected === undefined) return;
 
-    const { selectedBoxes, clearSelected } = this.context;
-    if (selectedBoxes === undefined) return;
+    const { code, shiftKey } = event;
 
-    const code = event.code;
-    const shift = event.shiftKey;
     switch (code) {
       case "Digit1":
       case "Digit2":
@@ -32,45 +45,80 @@ export default class Board extends React.Component {
         const str = code.charAt(code.length - 1);
         const digit = Number.parseInt(str);
 
-        const setter = shift ? this.markSetter((marked) => {
-          if (marked.has(digit)) {
-            marked.delete(digit);
-          } else {
-            marked.add(digit);
-          }
-        }) : this.valueSetter(digit);
+        const data = new Map(this.state.data);
+        for (const id of selected) {
+          const { marks, value } = this.getOrDefault(data, id);
 
-        selectedBoxes.forEach(setter);
+          if (shiftKey) {
+            if (marks.has(digit)) {
+              marks.delete(digit);
+            } else {
+              marks.add(digit);
+            }
+
+            data.set(id, { marks, value });
+          } else {
+            data.set(id, { marks, value: digit });
+          }
+        }
+
+        this.setState({ data });
         break;
       }
       case "Delete":
       case "Backspace": {
-        const setter = shift ? this.markSetter((marked) => marked.clear()) : this.valueSetter(undefined);
-        selectedBoxes.forEach(setter);
+        const data = new Map(this.state.data);
+        for (const id of selected) {
+          const { marks, value } = this.getOrDefault(data, id);
+
+          if (shiftKey || !value) {
+            data.set(id, { marks: new Set(), value });
+          } else {
+            data.set(id, { marks, value: undefined });
+          }
+        }
+
+        this.setState({ data });
         break;
       }
       case "Escape": {
-        clearSelected();
+        setSelected({ type: "clear" });
       }
     }
   };
 
-  componentDidMount(): void {
+  componentDidMount() {
     window.addEventListener("keydown", this.handleKeyDown);
   }
 
-  componentWillUnmount(): void {
+  componentWillUnmount() {
     window.removeEventListener("keydown", this.handleKeyDown);
   }
 
   render() {
+    const { selected, setSelected } = this.props;
+
     const boxes = [];
     for (let i = 0; i < 9; i++) {
       for (let j = 0; j < 9; j++) {
         const hasBM = i === 2 || i === 5;
         const hasRM = j === 2 || j === 5;
 
-        boxes.push(<Box key={i * 9 + j} row={i} column={j} hasRM={hasRM} hasBM={hasBM} />);
+        const id = i * 9 + j;
+        const isSelected = selected?.has(id) || false;
+
+        const { marks, value } = this.getOrDefault(this.state.data, id);
+        boxes.push((<Box key={id}
+          id={id}
+          row={i}
+          column={j}
+          hasRM={hasRM}
+          hasBM={hasBM}
+          isSelected={isSelected}
+          setSelected={setSelected}
+          value={value}
+          marks={marks}
+        />));
       }
     }
 
