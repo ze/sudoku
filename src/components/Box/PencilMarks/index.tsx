@@ -3,13 +3,13 @@ import "./index.scss";
 import Marking from "./Marking";
 
 interface PencilMarksProps {
-  marked: Set<number>;
+  marks: Set<number>;
 }
 
-const PencilMarks: React.FC<PencilMarksProps> = ({ marked }) => {
+const PencilMarks: React.FC<PencilMarksProps> = ({ marks }) => {
   const markings = [];
   for (let i = 1; i < 10; i++) {
-    markings.push(<Marking key={i} digit={i} marked={marked.has(i)} />);
+    markings.push(<Marking key={i} digit={i} marked={marks.has(i)} />);
   }
 
   return (<div className="pencil-marks">
@@ -18,13 +18,13 @@ const PencilMarks: React.FC<PencilMarksProps> = ({ marked }) => {
 };
 
 const areEqual = (prevProps: Readonly<PencilMarksProps>, nextProps: Readonly<PencilMarksProps>) => {
-  const prevMarked = prevProps.marked;
-  const nextMarked = nextProps.marked;
+  const prevMarks = prevProps.marks;
+  const nextMarks = nextProps.marks;
 
-  if (prevMarked.size !== nextMarked.size) return false;
+  if (prevMarks.size !== nextMarks.size) return false;
 
-  for (const mark of prevMarked.values()) {
-    if (!nextMarked.has(mark)) {
+  for (const mark of prevMarks) {
+    if (!nextMarks.has(mark)) {
       return false;
     }
   }
