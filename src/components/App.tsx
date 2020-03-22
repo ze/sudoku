@@ -27,7 +27,7 @@ export function getOrDefault(data: Map<number, BoxData>, id: number): BoxData {
 
 export default class App extends React.Component<{}, AppState> {
   state: AppState = {
-    selected: undefined,
+    selected: new Set<number>().add(0),
     data: new Map(),
     isRegular: true,
   };
@@ -96,6 +96,18 @@ export default class App extends React.Component<{}, AppState> {
     this.setState({ data });
   };
 
+  moveSelected = (offset: number, condition: (id: number) => boolean) => {
+    const { selected } = this.state;
+    if (selected === undefined) return;
+
+    if (selected.size === 1) {
+      const id = selected.values().next().value;
+      if (condition(id)) {
+        this.setSelected({ type: "set", box: id + offset });
+      }
+    }
+  };
+
   private static isShift = false;
 
   handleKeyDown = (event: KeyboardEvent) => {
@@ -133,6 +145,27 @@ export default class App extends React.Component<{}, AppState> {
       }
       case "Escape": {
         this.setSelected({ type: "clear" });
+        break;
+      }
+      case "KeyW":
+      case "ArrowUp": {
+        this.moveSelected(-9, (id) => id >= 9);
+        break;
+      }
+      case "KeyS":
+      case "ArrowDown": {
+        this.moveSelected(9, (id) => id < 72);
+        break;
+      }
+      case "KeyA":
+      case "ArrowLeft": {
+        this.moveSelected(-1, (id) => id !== 0);
+        break;
+      }
+      case "KeyD":
+      case "ArrowRight": {
+        this.moveSelected(1, (id) => id !== 80);
+        break;
       }
     }
   };
