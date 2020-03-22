@@ -1,13 +1,19 @@
 import React from "react";
-import { KeyboardProps } from ".";
 
-interface NumberContainerProps extends KeyboardProps {
-  digit: number;
+interface NumberContainerProps {
+  isRegular: boolean;
+  index: number;
 }
 
-const NumberContainer: React.FC<NumberContainerProps> = ({ isRegular, digit }) => {
-  const row = Math.floor(digit / 3);
-  const col = digit % 3;
+interface KeyboardNumberPadProps {
+  isRegular: boolean;
+  setSelectedValue: (digit: number) => void;
+  clearSelectedValue: () => void;
+}
+
+const NumberContainer: React.FC<NumberContainerProps> = ({ isRegular, index }) => {
+  const row = Math.floor(index / 3);
+  const col = index % 3;
 
   const classNames = [];
   classNames.push(isRegular ? "regular" : "candidate");
@@ -15,22 +21,21 @@ const NumberContainer: React.FC<NumberContainerProps> = ({ isRegular, digit }) =
   col !== 0 && classNames.push(`col-${col}`);
 
   return (<div className="kb-np-number">
-    <p className={classNames.join(" ")}>{digit + 1}</p>
+    <p className={classNames.join(" ")}>{index + 1}</p>
   </div>);
 };
 
-const KeyboardNumberPad: React.FC<KeyboardProps> = ({ isRegular }) => {
-
+const KeyboardNumberPad: React.FC<KeyboardNumberPadProps> = ({ isRegular, setSelectedValue, clearSelectedValue }) => {
   const numbers = [];
-
   for (let i = 0; i < 9; i++) {
-    numbers.push((<div key={i} className="kb-np-container">
-      <NumberContainer isRegular={isRegular} digit={i} />
+    numbers.push((<div key={i} onClick={() => setSelectedValue(i + 1)} className="kb-np-number-container">
+      <NumberContainer isRegular={isRegular} index={i} />
     </div>));
   }
 
   return (<div className="kb-np">
     {numbers}
+    <div onClick={clearSelectedValue} className="kb-np-delete">Delete</div>
   </div>);
 };
 

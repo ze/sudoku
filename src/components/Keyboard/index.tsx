@@ -3,18 +3,18 @@ import "./index.scss";
 import KeyboardNumberPad from "./KeyboardNumberPad";
 import KeyboardSwitcher from "./KeyboardSwitcher";
 
-export interface KeyboardProps {
+interface KeyboardProps {
   isRegular: boolean;
+  setRegular: (isRegular: boolean) => void;
+  setSelectedValue: (digit: number) => void;
+  clearSelectedValue: () => void;
 }
 
-export default class Keyboard extends React.PureComponent<KeyboardProps> {
+const Keyboard: React.FC<KeyboardProps> = ({ isRegular, setRegular, setSelectedValue, clearSelectedValue }) => (<div className="kb">
+  <KeyboardSwitcher isRegular={isRegular} setRegular={setRegular} />
+  <KeyboardNumberPad isRegular={isRegular}
+    setSelectedValue={setSelectedValue}
+    clearSelectedValue={clearSelectedValue} />
+</div>);
 
-  render() {
-    const { isRegular } = this.props;
-
-    return (<div className="kb">
-      <KeyboardSwitcher isRegular={isRegular} />
-      <KeyboardNumberPad isRegular={isRegular} />
-    </div>);
-  }
-}
+export default Keyboard;

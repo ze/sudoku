@@ -2,10 +2,10 @@ import React from "react";
 import Board from "./Board";
 import Keyboard from "./Keyboard";
 
-export interface AppState {
+interface AppState {
   selected?: Set<number>;
-  setSelected: (event: BoxEvent) => void;
   data: Map<number, BoxData>;
+  isRegular: boolean;
 }
 
 export type BoxEvent =
@@ -20,12 +20,18 @@ export type BoxData = {
 
 export function getOrDefault(data: Map<number, BoxData>, id: number): BoxData {
   return data.get(id) || {
-    value: undefined,
-    marks: new Set()
+    marks: new Set(),
+    value: undefined
   };
 }
 
 export default class App extends React.Component<{}, AppState> {
+  state: AppState = {
+    selected: undefined,
+    data: new Map(),
+    isRegular: true,
+  };
+
   setSelected = (event: BoxEvent) => {
     switch (event.type) {
       case "add": {
@@ -46,18 +52,65 @@ export default class App extends React.Component<{}, AppState> {
     }
   };
 
-  state: AppState = {
-    selected: undefined,
-    setSelected: this.setSelected,
-    data: new Map()
-  };
+  setRegular = (isRegular: boolean) => this.setState({ isRegular });
 
-  handleKeyDown = (event: KeyboardEvent) => {
-    const { selected, setSelected } = this.state;
+  setSelectedValue = (digit: number) => {
+    const { selected, isRegular } = this.state;
     if (selected === undefined) return;
 
-    const { code, shiftKey } = event;
+    const data = new Map(this.state.data);
+    for (const id of selected) {
+      const { marks, value } = getOrDefault(data, id);
 
+      if (isRegular) {
+        data.set(id, { marks, value: digit });
+      } else {
+        if (marks.has(digit)) {
+          marks.delete(digit);
+        } else {
+          marks.add(digit);
+        }
+
+        data.set(id, { marks, value });
+      }
+    }
+
+    this.setState({ data });
+  };
+
+  clearSelectedValue = () => {
+    const { selected, isRegular } = this.state;
+    if (selected === undefined) return;
+
+    const data = new Map(this.state.data);
+    for (const id of selected) {
+      const { marks, value } = getOrDefault(data, id);
+
+      if (isRegular && value) {
+        data.set(id, { marks, value: undefined });
+      } else {
+        data.set(id, { marks: new Set(), value });
+      }
+    }
+
+    this.setState({ data });
+  };
+
+  private static isShift = false;
+
+  handleKeyDown = (event: KeyboardEvent) => {
+    if (event.repeat) return;
+
+    const { selected, isRegular } = this.state;
+
+    if (event.shiftKey && !App.isShift) {
+      App.isShift = true;
+      this.setState({ isRegular: !isRegular });
+    }
+
+    if (selected === undefined) return;
+
+    const code = event.code;
     switch (code) {
       case "Digit1":
       case "Digit2":
@@ -70,63 +123,46 @@ export default class App extends React.Component<{}, AppState> {
       case "Digit9": {
         const str = code.charAt(code.length - 1);
         const digit = Number.parseInt(str);
-
-        const data = new Map(this.state.data);
-        for (const id of selected) {
-          const { marks, value } = getOrDefault(data, id);
-
-          if (shiftKey) {
-            if (marks.has(digit)) {
-              marks.delete(digit);
-            } else {
-              marks.add(digit);
-            }
-
-            data.set(id, { marks, value });
-          } else {
-            data.set(id, { marks, value: digit });
-          }
-        }
-
-        this.setState({ data });
+        this.setSelectedValue(digit);
         break;
       }
       case "Delete":
       case "Backspace": {
-        const data = new Map(this.state.data);
-        for (const id of selected) {
-          const { marks, value } = getOrDefault(data, id);
-
-          if (shiftKey || !value) {
-            data.set(id, { marks: new Set(), value });
-          } else {
-            data.set(id, { marks, value: undefined });
-          }
-        }
-
-        this.setState({ data });
+        this.clearSelectedValue();
         break;
       }
       case "Escape": {
-        setSelected({ type: "clear" });
+        this.setSelected({ type: "clear" });
       }
+    }
+  };
+
+  handleKeyUp = (event: KeyboardEvent) => {
+    if (event.code === "ShiftLeft" || event.code === "ShiftRight") {
+      App.isShift = false;
+      this.setState({ isRegular: !this.state.isRegular });
     }
   };
 
   componentDidMount() {
     window.addEventListener("keydown", this.handleKeyDown);
+    window.addEventListener("keyup", this.handleKeyUp);
   }
 
   componentWillUnmount() {
     window.removeEventListener("keydown", this.handleKeyDown);
+    window.removeEventListener("keyup", this.handleKeyUp);
   }
 
   render() {
-    const { selected, setSelected, data } = this.state;
+    const { selected, data, isRegular } = this.state;
 
     return (<>
-      <Board selected={selected} setSelected={setSelected} data={data} />
-      <Keyboard isRegular={true} />
+      <Board selected={selected} setSelected={this.setSelected} data={data} />
+      <Keyboard isRegular={isRegular}
+        setRegular={this.setRegular}
+        setSelectedValue={this.setSelectedValue}
+        clearSelectedValue={this.clearSelectedValue} />
     </>);
   }
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { BoxEvent } from "../App";
 import "./index.scss";
 import PencilMarks from "./PencilMarks";
@@ -11,28 +11,18 @@ interface BoxProps {
   hasBM: boolean;
   isSelected: boolean;
   setSelected: (event: BoxEvent) => void;
-  value?: number;
   marks: Set<number>;
+  value?: number;
 }
 
 const Box: React.FC<BoxProps> = ({ id, hasRM, hasBM, isSelected, setSelected, value, marks }) => {
-  const divRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const onDivClick = (event: MouseEvent) => {
-      if (event.shiftKey) {
-        setSelected({ type: "add", box: id });
-      } else {
-        setSelected({ type: "set", box: id });
-      }
-    };
-
-    divRef?.current?.addEventListener("click", onDivClick);
-
-    return () => {
-      divRef?.current?.removeEventListener("click", onDivClick);
-    };
-  }, [id, setSelected, divRef]);
+  const handleClick = (event: React.MouseEvent) => {
+    if (event.shiftKey) {
+      setSelected({ type: "add", box: id });
+    } else {
+      setSelected({ type: "set", box: id });
+    }
+  };
 
   const classNames = ["box"];
   isSelected && classNames.push("selected");
@@ -48,7 +38,7 @@ const Box: React.FC<BoxProps> = ({ id, hasRM, hasBM, isSelected, setSelected, va
     boxRender = (<></>);
   }
 
-  return (<div ref={divRef} className={classNames.join(" ")}>{boxRender}</div>);
+  return (<div onClick={handleClick} className={classNames.join(" ")}>{boxRender}</div>);
 };
 
 export default Box;

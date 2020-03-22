@@ -1,12 +1,12 @@
 @import "../globals";
 
 $kb-width: 240px;
-$kb-np-container-length: $kb-width * 0.3;
+$kb-np-length: $kb-width * 0.3;
 
 $kb-np-margin-top: 10px;
 $kb-np-spacing: 4px;
 
-$kb-np-number-length: $kb-np-container-length - 2 * $kb-np-spacing;
+$kb-np-number-length: $kb-np-length - 2 * $kb-np-spacing;
 
 $button-height: 40px;
 $button-border-radius: 2px;
@@ -71,12 +71,8 @@ button {
   @include user-select(none);
 }
 
-.kb-np-container {
-  position: relative;
-
-  width: $kb-np-container-length;
-  height: $kb-np-container-length;
-
+.kb-np-delete,
+.kb-np-number-container {
   margin-top: $kb-np-margin-top;
 
   background-color: $kb-np-color;
@@ -90,6 +86,22 @@ button {
   &:active {
     background-color: $kb-np-active-color;
   }
+}
+
+.kb-np-delete {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  height: $kb-np-length * 2 / 3;
+}
+
+.kb-np-number-container {
+  position: relative;
+
+  width: $kb-np-length;
+  height: $kb-np-length;
 }
 
 .kb-np-number {
