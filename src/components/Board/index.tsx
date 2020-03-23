@@ -1,15 +1,15 @@
 import React from "react";
-import { BoxData, BoxEvent, getOrDefault } from "../App";
+import { BoxData, BoxEvent } from "../App";
 import Box from "../Box";
 import "./index.scss";
 
 interface BoardProps {
   selected?: Set<number>;
   setSelected: (event: BoxEvent) => void;
-  data: Map<number, BoxData>;
+  getBox: (id: number) => BoxData;
 }
 
-const Board: React.FC<BoardProps> = ({ selected, setSelected, data }) => {
+const Board: React.FC<BoardProps> = ({ selected, setSelected, getBox }) => {
   const boxes = [];
   for (let i = 0; i < 9; i++) {
     for (let j = 0; j < 9; j++) {
@@ -19,7 +19,7 @@ const Board: React.FC<BoardProps> = ({ selected, setSelected, data }) => {
       const id = i * 9 + j;
       const isSelected = selected?.has(id) || false;
 
-      const { marks, value } = getOrDefault(data, id);
+      const { marks, value } = getBox(id);
       boxes.push((<Box key={id}
         id={id}
         row={i}

@@ -18,13 +18,6 @@ export type BoxData = {
   value?: number;
 };
 
-export function getOrDefault(data: Map<number, BoxData>, id: number): BoxData {
-  return data.get(id) || {
-    marks: new Set(),
-    value: undefined
-  };
-}
-
 export default class App extends React.Component<{}, AppState> {
   state: AppState = {
     selected: new Set<number>().add(0),
@@ -52,6 +45,11 @@ export default class App extends React.Component<{}, AppState> {
     }
   };
 
+  getBox = (id: number) => this.state.data.get(id) || {
+    marks: new Set(),
+    value: undefined
+  };
+
   setRegular = (isRegular: boolean) => this.setState({ isRegular });
 
   setSelectedValue = (digit: number) => {
@@ -60,18 +58,20 @@ export default class App extends React.Component<{}, AppState> {
 
     const data = new Map(this.state.data);
     for (const id of selected) {
-      const { marks, value } = getOrDefault(data, id);
+      const { marks, value } = this.getBox(id);
 
       if (isRegular) {
         data.set(id, { marks, value: digit });
       } else {
-        if (marks.has(digit)) {
-          marks.delete(digit);
+        const newMarks = new Set(marks);
+
+        if (newMarks.has(digit)) {
+          newMarks.delete(digit);
         } else {
-          marks.add(digit);
+          newMarks.add(digit);
         }
 
-        data.set(id, { marks, value });
+        data.set(id, { marks: newMarks, value });
       }
     }
 
@@ -79,14 +79,14 @@ export default class App extends React.Component<{}, AppState> {
   };
 
   clearSelectedValue = () => {
-    const { selected, isRegular } = this.state;
+    const { selected } = this.state;
     if (selected === undefined) return;
 
     const data = new Map(this.state.data);
     for (const id of selected) {
-      const { marks, value } = getOrDefault(data, id);
+      const { marks, value } = this.getBox(id);
 
-      if (isRegular && value) {
+      if (value) {
         data.set(id, { marks, value: undefined });
       } else {
         data.set(id, { marks: new Set(), value });
@@ -188,10 +188,10 @@ export default class App extends React.Component<{}, AppState> {
   }
 
   render() {
-    const { selected, data, isRegular } = this.state;
+    const { selected, isRegular } = this.state;
 
     return (<>
-      <Board selected={selected} setSelected={this.setSelected} data={data} />
+      <Board selected={selected} setSelected={this.setSelected} getBox={this.getBox} />
       <Keyboard isRegular={isRegular}
         setRegular={this.setRegular}
         setSelectedValue={this.setSelectedValue}

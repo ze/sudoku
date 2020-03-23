@@ -41,4 +41,23 @@ const Box: React.FC<BoxProps> = ({ id, hasRM, hasBM, isSelected, setSelected, va
   return (<div onClick={handleClick} className={classNames.join(" ")}>{boxRender}</div>);
 };
 
-export default Box;
+function setEqual(prevSet: Set<number>, nextSet: Set<number>): boolean {
+  if (prevSet.size !== nextSet.size) return false;
+
+  for (const n of prevSet) {
+    if (!nextSet.has(n)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function areEqual(prev: Readonly<BoxProps>, next: Readonly<BoxProps>): boolean {
+  const { id, hasRM, hasBM, isSelected, marks, value } = prev;
+
+  return id === next.id && hasRM === next.hasRM && hasBM === next.hasBM && isSelected === next.isSelected &&
+    value === next.value && setEqual(marks, next.marks);
+}
+
+export default React.memo(Box, areEqual);

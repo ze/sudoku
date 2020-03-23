@@ -17,4 +17,4 @@ const Keyboard: React.FC<KeyboardProps> = ({ isRegular, setRegular, setSelectedV
     clearSelectedValue={clearSelectedValue} />
 </div>);
 
-export default Keyboard;
+export default React.memo(Keyboard);
