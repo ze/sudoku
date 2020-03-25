@@ -17,6 +17,8 @@ $button-border-color: #222222;
 $button-bg-color: #ffffff;
 $button-bg-active-color: darken($button-bg-color, 5%);
 
+$highlighted-color: #064af1;
+
 @mixin user-select($select) {
   -webkit-user-select: $select;
   -moz-user-select: $select;

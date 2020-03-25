@@ -1,16 +1,17 @@
 import React from "react";
-import { BoxData, BoxEvent } from "../App";
+import { BoxData, SelectEvent } from "../App";
 import Box from "../Box";
 import "./index.scss";
 
 interface BoardProps {
   selected?: Set<number>;
-  setSelected: (event: BoxEvent) => void;
+  setSelected: (event: SelectEvent) => void;
   getBox: (id: number) => BoxData;
   isSolved: boolean;
+  highlight?: number;
 }
 
-const Board: React.FC<BoardProps> = ({ selected, setSelected, getBox, isSolved }) => {
+const Board: React.FC<BoardProps> = ({ selected, setSelected, getBox, isSolved, highlight }) => {
   const boxes = [];
   for (let i = 0; i < 9; i++) {
     for (let j = 0; j < 9; j++) {
@@ -21,6 +22,7 @@ const Board: React.FC<BoardProps> = ({ selected, setSelected, getBox, isSolved }
       const isSelected = selected?.has(id) || false;
 
       const { marks, value, isConfirmed } = getBox(id);
+
       boxes.push((<Box key={id}
         id={id}
         row={i}
@@ -32,6 +34,7 @@ const Board: React.FC<BoardProps> = ({ selected, setSelected, getBox, isSolved }
         isConfirmed={isConfirmed}
         marks={marks}
         value={value}
+        highlight={highlight}
       />));
     }
   }

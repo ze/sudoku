@@ -10,6 +10,7 @@
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
+    "classnames": "^2.2.6",
     "node-sass": "^4.13.0",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
@@ -37,6 +38,7 @@
     ]
   },
   "devDependencies": {
+    "@types/classnames": "^2.2.10",
     "@types/node-sass": "^4.11.0"
   }
 }

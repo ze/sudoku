@@ -7,11 +7,16 @@ interface AppState {
   data: Map<number, BoxData>;
   isRegular: boolean;
   isSolved: boolean;
+  highlight?: number;
 }
 
-export type BoxEvent =
-  | { type: "add", box: number; }
-  | { type: "set", box: number; }
+export type SelectEvent =
+  | { type: "add", id: number; }
+  | { type: "set", id: number; }
+  | { type: "clear"; };
+
+export type ValueEvent =
+  | { type: "set", value: number; }
   | { type: "clear"; };
 
 export type BoxData = {
@@ -25,7 +30,8 @@ export default class App extends React.Component<{}, AppState> {
     selected: new Set<number>().add(0),
     data: new Map(),
     isRegular: true,
-    isSolved: false
+    isSolved: false,
+    highlight: undefined
   };
 
   constructor(props: Readonly<{}>) {
@@ -35,6 +41,7 @@ export default class App extends React.Component<{}, AppState> {
     const repr = urlSearchParams.get("board");
     if (repr !== null) {
       this.loadBoardData(repr);
+      this.state.highlight = this.state.data.get(0)?.value;
     }
   }
 
@@ -43,27 +50,29 @@ export default class App extends React.Component<{}, AppState> {
 
     for (let i = 0; i < Math.min(81, repr.length); i++) {
       const digit = Number.parseInt(repr.charAt(i));
-      if (!isNaN(digit)) {
+      if (!isNaN(digit) && digit > 0 && digit < 10) {
         data.set(i, { marks: new Set(), value: digit, isConfirmed: true });
       }
     }
   };
 
-  setSelected = (event: BoxEvent) => {
+  setHighlight = (highlight?: number) => this.setState({ highlight });
+
+  setSelected = (event: SelectEvent) => {
     switch (event.type) {
       case "add": {
         const selected = new Set<number>(this.state.selected);
-        selected.add(event.box);
-        this.setState({ selected });
+        selected.add(event.id);
+        this.setState({ selected, highlight: undefined });
         break;
       }
       case "set": {
-        const selected = new Set<number>().add(event.box);
-        this.setState({ selected });
+        const selected = new Set<number>().add(event.id);
+        this.setState({ selected, highlight: this.getBox(event.id).value });
         break;
       }
       case "clear": {
-        this.setState({ selected: undefined });
+        this.setState({ selected: undefined, highlight: undefined });
         break;
       }
     }
@@ -77,56 +86,59 @@ export default class App extends React.Component<{}, AppState> {
 
   setRegular = (isRegular: boolean) => this.setState({ isRegular });
 
-  setSelectedValue = (digit: number) => {
+  setValue = (isRegular: boolean, { marks, value, isConfirmed }: BoxData, digit: number) => {
+    if (isRegular) {
+      return { marks, value: digit, isConfirmed };
+    } else {
+      const newMarks = new Set(marks);
+
+      if (newMarks.has(digit)) {
+        newMarks.delete(digit);
+      } else {
+        newMarks.add(digit);
+      }
+
+      return { marks: newMarks, value, isConfirmed };
+    }
+  };
+
+  clearValue = ({ marks, value, isConfirmed }: BoxData) => {
+    if (value) {
+      return { marks, value: undefined, isConfirmed };
+    } else {
+      return { marks: new Set<number>(), value, isConfirmed };
+    }
+  };
+
+  setSelectedValue = (event: ValueEvent) => {
     const { selected, isRegular } = this.state;
     if (selected === undefined) return;
 
+    let newHighlight: number | undefined;
     const data = new Map(this.state.data);
     for (const id of selected) {
-      const { marks, value, isConfirmed } = this.getBox(id);
+      const boxData = this.getBox(id);
 
-      if (isConfirmed) {
+      if (boxData.isConfirmed) {
         continue;
       }
 
-      if (isRegular) {
-        data.set(id, { marks, value: digit, isConfirmed });
-      } else {
-        const newMarks = new Set(marks);
-
-        if (newMarks.has(digit)) {
-          newMarks.delete(digit);
-        } else {
-          newMarks.add(digit);
+      switch (event.type) {
+        case "set": {
+          data.set(id, this.setValue(isRegular, boxData, event.value));
+          if (isRegular && selected.size === 1) {
+            newHighlight = event.value;
+          }
+          break;
         }
-
-        data.set(id, { marks: newMarks, value, isConfirmed });
+        case "clear": {
+          data.set(id, this.clearValue(boxData));
+          break;
+        }
       }
     }
 
-    this.setState({ data });
-  };
-
-  clearSelectedValue = () => {
-    const { selected } = this.state;
-    if (selected === undefined) return;
-
-    const data = new Map(this.state.data);
-    for (const id of selected) {
-      const { marks, value, isConfirmed } = this.getBox(id);
-
-      if (isConfirmed) {
-        continue;
-      }
-
-      if (value) {
-        data.set(id, { marks, value: undefined, isConfirmed });
-      } else {
-        data.set(id, { marks: new Set(), value, isConfirmed });
-      }
-    }
-
-    this.setState({ data });
+    this.setState({ data, highlight: newHighlight });
   };
 
   moveSelected = (offset: number, condition: (id: number) => boolean) => {
@@ -136,7 +148,7 @@ export default class App extends React.Component<{}, AppState> {
     if (selected.size === 1) {
       const id = selected.values().next().value;
       if (condition(id)) {
-        this.setSelected({ type: "set", box: id + offset });
+        this.setSelected({ type: "set", id: id + offset });
       }
     }
   };
@@ -177,14 +189,14 @@ export default class App extends React.Component<{}, AppState> {
 
         const str = code.charAt(code.length - 1);
         const digit = Number.parseInt(str);
-        this.setSelectedValue(digit);
+        this.setSelectedValue({ type: "set", value: digit });
         break;
       }
       case "Delete":
       case "Backspace": {
         if (repeat) return;
 
-        this.clearSelectedValue();
+        this.setSelectedValue({ type: "clear" });
         break;
       }
       case "Escape": {
@@ -324,14 +336,17 @@ export default class App extends React.Component<{}, AppState> {
   }
 
   render() {
-    const { selected, isRegular, isSolved } = this.state;
+    const { selected, isRegular, isSolved, highlight } = this.state;
 
     return (<>
-      <Board selected={selected} setSelected={this.setSelected} getBox={this.getBox} isSolved={isSolved} />
+      <Board selected={selected}
+        setSelected={this.setSelected}
+        getBox={this.getBox}
+        isSolved={isSolved}
+        highlight={highlight} />
       <Sidebar isRegular={isRegular}
         setRegular={this.setRegular}
         setSelectedValue={this.setSelectedValue}
-        clearSelectedValue={this.clearSelectedValue}
         getBox={this.getBox} />
     </>);
   }

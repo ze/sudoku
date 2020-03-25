@@ -17,5 +17,9 @@ $marking-length: $box-length / 3;
     &.marked {
       opacity: 1;
     }
+
+    &.highlighted {
+      color: $highlighted-color;
+    }
   }
 }

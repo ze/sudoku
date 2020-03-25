@@ -36,6 +36,10 @@ $box-confirmed-hover-color: mix($box-confirmed-color, $box-hover-color, 40%);
     }
   }
 
+  &.highlighted {
+    color: $highlighted-color;
+  }
+
   &.selected {
     background-color: $box-selected-color;
   }
