@@ -1,50 +1,28 @@
 @import "../globals";
 
-$kb-width: 240px;
-$kb-np-length: $kb-width * 0.3;
+$kb-np-length: $sidebar-width * 0.3;
 
 $kb-np-margin-top: 10px;
 $kb-np-spacing: 4px;
 
 $kb-np-number-length: $kb-np-length - 2 * $kb-np-spacing;
 
-$button-border-length: 1px;
-$button-border-radius: 2px;
-$button-height: 40px;
-
-$kb-np-color: #ffffff;
-$kb-np-active-color: darken($kb-np-color, 5%);
+$button-height: 35px;
 
 $button-font-color: #000000;
 $button-selected-font-color: #eeeeee;
 
-$button-bg-color: #ffffff;
 $button-selected-bg-color: #000000;
-$button-border-color: #222222;
 
-.kb {
-  $kb-height: $board-length + 2 * $board-outline;
-
-  width: 100%;
-  max-width: $kb-width;
-  height: $kb-height;
-}
-
-button {
+.kb-sw-regular,
+.kb-sw-candidate {
   height: $button-height;
   width: 50%;
-
-  text-align: center;
-  cursor: pointer;
 
   background-color: $button-bg-color;
   color: $button-font-color;
 
   border: $button-border-length solid $button-border-color;
-
-  &:focus {
-    outline: none;
-  }
 
   &.kb-sw-regular {
     border-top-left-radius: $button-border-radius;
@@ -76,7 +54,7 @@ button {
 .kb-np-number-container {
   margin-top: $kb-np-margin-top;
 
-  background-color: $kb-np-color;
+  background-color: $button-bg-color;
   color: $button-font-color;
 
   border: $button-border-length solid $button-border-color;
@@ -85,7 +63,7 @@ button {
   cursor: pointer;
 
   &:active {
-    background-color: $kb-np-active-color;
+    background-color: $button-bg-active-color;
   }
 }
 

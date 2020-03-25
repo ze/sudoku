@@ -9,10 +9,10 @@ const KeyboardSwitcher: React.FC<KeyboardSwitcherProps> = ({ isRegular, setRegul
   let regularClassName = "kb-sw-regular" + (isRegular ? " kb-sw-selected" : "");
   let candidateClassName = "kb-sw-candidate" + (!isRegular ? " kb-sw-selected" : "");
 
-  return (<div>
+  return (<>
     <button onClick={() => setRegular(true)} className={regularClassName}>Regular</button>
     <button onClick={() => setRegular(false)} className={candidateClassName}>Candidate</button>
-  </div>);
+  </>);
 };
 
 export default KeyboardSwitcher;

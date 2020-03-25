@@ -36,7 +36,7 @@ const Board: React.FC<BoardProps> = ({ selected, setSelected, getBox, isSolved }
     }
   }
 
-  return (<div id="board" className={isSolved ? "solved" : ""}>
+  return (<div id="board" className={isSolved ? "solved" : undefined}>
     {boxes}
   </div>);
 };

@@ -1,8 +1,8 @@
 import React from "react";
 import { BoxEvent } from "../App";
+import PencilMarks from "../PencilMarks";
 import { setEqual } from "../utils";
 import "./index.scss";
-import PencilMarks from "./PencilMarks";
 
 interface BoxProps {
   id: number;

@@ -10,7 +10,7 @@ interface KeyboardProps {
   clearSelectedValue: () => void;
 }
 
-const Keyboard: React.FC<KeyboardProps> = ({ isRegular, setRegular, setSelectedValue, clearSelectedValue }) => (<div className="kb">
+const Keyboard: React.FC<KeyboardProps> = ({ isRegular, setRegular, setSelectedValue, clearSelectedValue }) => (<div>
   <KeyboardSwitcher isRegular={isRegular} setRegular={setRegular} />
   <KeyboardNumberPad isRegular={isRegular}
     setSelectedValue={setSelectedValue}

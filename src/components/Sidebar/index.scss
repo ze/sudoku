@@ -1,0 +1,12 @@
+@import "../globals";
+
+$sidebar-height: $board-length + 2 * $board-outline;
+
+#sidebar {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+
+  height: $sidebar-height;
+  width: $sidebar-width;
+}

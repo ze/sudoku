@@ -1,6 +1,6 @@
 import React from "react";
 import Board from "./Board";
-import Keyboard from "./Keyboard";
+import Sidebar from "./Sidebar";
 
 interface AppState {
   selected?: Set<number>;
@@ -328,10 +328,11 @@ export default class App extends React.Component<{}, AppState> {
 
     return (<>
       <Board selected={selected} setSelected={this.setSelected} getBox={this.getBox} isSolved={isSolved} />
-      <Keyboard isRegular={isRegular}
+      <Sidebar isRegular={isRegular}
         setRegular={this.setRegular}
         setSelectedValue={this.setSelectedValue}
-        clearSelectedValue={this.clearSelectedValue} />
+        clearSelectedValue={this.clearSelectedValue}
+        getBox={this.getBox} />
     </>);
   }
 }

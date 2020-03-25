@@ -13,6 +13,14 @@ p {
   text-align: center;
 }
 
+button {
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+  }
+}
+
 #root {
   height: 100%;
 

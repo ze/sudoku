@@ -1,0 +1,37 @@
+@import "../globals";
+
+$clip-height: 20px;
+$clip-padding: 6px;
+$clip-font-size: ($clip-height + $clip-padding) / 2;
+
+#clipboard {
+  display: flex;
+}
+
+#clip-text {
+  width: 100%;
+  height: $clip-height;
+  padding: $clip-padding;
+  font-size: $clip-font-size;
+
+  border: $button-border-length solid $button-border-color;
+  border-top-left-radius: $button-border-radius;
+  border-bottom-left-radius: $button-border-radius;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+#clip-button {
+  background-color: $button-bg-color;
+
+  border: $button-border-length solid $button-border-color;
+  border-top-right-radius: $button-border-radius;
+  border-bottom-right-radius: $button-border-radius;
+  border-left: 0px;
+
+  &:active {
+    background-color: $button-bg-active-color;
+  }
+}

@@ -7,6 +7,16 @@ $board-outline: $box-length / 10;
 $board-bg-color: #676767;
 $board-outline-color: #222222;
 
+$sidebar-width: 240px;
+
+$button-border-length: 1px;
+$button-border-radius: 2px;
+
+$button-border-color: #222222;
+
+$button-bg-color: #ffffff;
+$button-bg-active-color: darken($button-bg-color, 5%);
+
 @mixin user-select($select) {
   -webkit-user-select: $select;
   -moz-user-select: $select;
