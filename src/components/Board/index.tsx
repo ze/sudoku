@@ -7,9 +7,10 @@ interface BoardProps {
   selected?: Set<number>;
   setSelected: (event: BoxEvent) => void;
   getBox: (id: number) => BoxData;
+  isSolved: boolean;
 }
 
-const Board: React.FC<BoardProps> = ({ selected, setSelected, getBox }) => {
+const Board: React.FC<BoardProps> = ({ selected, setSelected, getBox, isSolved }) => {
   const boxes = [];
   for (let i = 0; i < 9; i++) {
     for (let j = 0; j < 9; j++) {
@@ -19,7 +20,7 @@ const Board: React.FC<BoardProps> = ({ selected, setSelected, getBox }) => {
       const id = i * 9 + j;
       const isSelected = selected?.has(id) || false;
 
-      const { marks, value } = getBox(id);
+      const { marks, value, isConfirmed } = getBox(id);
       boxes.push((<Box key={id}
         id={id}
         row={i}
@@ -28,13 +29,14 @@ const Board: React.FC<BoardProps> = ({ selected, setSelected, getBox }) => {
         hasBM={hasBM}
         isSelected={isSelected}
         setSelected={setSelected}
+        isConfirmed={isConfirmed}
         marks={marks}
         value={value}
       />));
     }
   }
 
-  return (<div id="board">
+  return (<div id="board" className={isSolved ? "solved" : ""}>
     {boxes}
   </div>);
 };

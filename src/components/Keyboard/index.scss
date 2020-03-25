@@ -8,8 +8,9 @@ $kb-np-spacing: 4px;
 
 $kb-np-number-length: $kb-np-length - 2 * $kb-np-spacing;
 
-$button-height: 40px;
+$button-border-length: 1px;
 $button-border-radius: 2px;
+$button-height: 40px;
 
 $kb-np-color: #ffffff;
 $kb-np-active-color: darken($kb-np-color, 5%);
@@ -17,8 +18,8 @@ $kb-np-active-color: darken($kb-np-color, 5%);
 $button-font-color: #000000;
 $button-selected-font-color: #eeeeee;
 
-$button-background-color: #ffffff;
-$button-selected-background-color: #000000;
+$button-bg-color: #ffffff;
+$button-selected-bg-color: #000000;
 $button-border-color: #222222;
 
 .kb {
@@ -36,10 +37,10 @@ button {
   text-align: center;
   cursor: pointer;
 
-  background-color: $button-background-color;
+  background-color: $button-bg-color;
   color: $button-font-color;
 
-  border: 1px solid $button-border-color;
+  border: $button-border-length solid $button-border-color;
 
   &:focus {
     outline: none;
@@ -59,7 +60,7 @@ button {
 .kb-sw-selected {
   border: none;
 
-  background-color: $button-selected-background-color;
+  background-color: $button-selected-bg-color;
   color: $button-selected-font-color;
 }
 
@@ -78,7 +79,7 @@ button {
   background-color: $kb-np-color;
   color: $button-font-color;
 
-  border: 1px solid $button-border-color;
+  border: $button-border-length solid $button-border-color;
   border-radius: $button-border-radius;
 
   cursor: pointer;

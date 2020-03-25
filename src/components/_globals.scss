@@ -4,7 +4,7 @@ $box-margin: $box-length / 20;
 $board-length: $box-length * 9 + $box-margin * 2;
 $board-outline: $box-length / 10;
 
-$board-background-color: #676767;
+$board-bg-color: #676767;
 $board-outline-color: #222222;
 
 @mixin user-select($select) {

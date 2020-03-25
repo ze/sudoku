@@ -1,5 +1,6 @@
 import React from "react";
 import { BoxEvent } from "../App";
+import { setEqual } from "../utils";
 import "./index.scss";
 import PencilMarks from "./PencilMarks";
 
@@ -11,11 +12,12 @@ interface BoxProps {
   hasBM: boolean;
   isSelected: boolean;
   setSelected: (event: BoxEvent) => void;
+  isConfirmed: boolean;
   marks: Set<number>;
   value?: number;
 }
 
-const Box: React.FC<BoxProps> = ({ id, hasRM, hasBM, isSelected, setSelected, value, marks }) => {
+const Box: React.FC<BoxProps> = ({ id, hasRM, hasBM, isSelected, setSelected, isConfirmed, value, marks }) => {
   const handleClick = (event: React.MouseEvent) => {
     if (event.shiftKey) {
       setSelected({ type: "add", box: id });
@@ -25,6 +27,7 @@ const Box: React.FC<BoxProps> = ({ id, hasRM, hasBM, isSelected, setSelected, va
   };
 
   const classNames = ["box"];
+  isConfirmed && classNames.push("confirmed");
   isSelected && classNames.push("selected");
   hasRM && classNames.push("rm");
   hasBM && classNames.push("bm");
@@ -40,18 +43,6 @@ const Box: React.FC<BoxProps> = ({ id, hasRM, hasBM, isSelected, setSelected, va
 
   return (<div onClick={handleClick} className={classNames.join(" ")}>{boxRender}</div>);
 };
-
-function setEqual(prevSet: Set<number>, nextSet: Set<number>): boolean {
-  if (prevSet.size !== nextSet.size) return false;
-
-  for (const n of prevSet) {
-    if (!nextSet.has(n)) {
-      return false;
-    }
-  }
-
-  return true;
-}
 
 function areEqual(prev: Readonly<BoxProps>, next: Readonly<BoxProps>): boolean {
   const { id, hasRM, hasBM, isSelected, marks, value } = prev;
